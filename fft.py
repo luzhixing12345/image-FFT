@@ -8,6 +8,8 @@ import pygame, math, os
 from pygame.locals import *
 from sys import exit
 
+from sympy import true
+
 def fftProcess(fileName):
     f = open(fileName,'r')
     content = f.readlines()
@@ -144,14 +146,18 @@ def draw(fname):
 
     bx = Boxin()
     clock = pygame.time.Clock()
+    
+    flag = False
     # 游戏主循环
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit()
+                flag = True
+                pygame.quit()
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    exit()
+                    flag = True
+                    pygame.quit()
                 elif event.key == K_LEFT and one_time > 0.1:
                     one_time *= 0.9
                     one_time = max(one_time, 0.1)
@@ -164,7 +170,8 @@ def draw(fname):
                     scale = max(scale, 0.001)
                 else:
                     print(type(event.key), event.key)
-
+        if flag:
+            return 
         # 将背景图画上去
         screen.fill((0, 0, 0))
         # 运行

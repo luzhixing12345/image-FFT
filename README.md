@@ -38,6 +38,8 @@ python mainm.py /xxx/xxx.py
 ```python
 python GUI.py
 ```
+- 退出pygame画图按`Ese`正常退出画下一个图
+- 可以更改`GUI.py-InteractiveWindow-loadPicture`中的路径为你自己文件夹的路径，方便每次搜索结果
 
 ## Referance
 - [3b1b fft](https://www.bilibili.com/video/av19141078?from=search&seid=5255738869667352545&spm_id_from=333.337.0.0)

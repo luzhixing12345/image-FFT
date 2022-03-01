@@ -68,7 +68,7 @@ class InteractiveWindow(QWidget):
         load picture from the computer content
         G:\\learnerLu\\image-FFT
         '''
-        self.fname, _ = QFileDialog.getOpenFileName(self, '选择图片', 'G:\\learnerLu\\image-FFT', 'Image files(*.jpg *.gif *.png *.jpeg)')
+        self.fname, _ = QFileDialog.getOpenFileName(self, '选择图片', 'G:\\learnerLu\\image-FFT\\examples', 'Image files(*.jpg *.gif *.png *.jpeg)')
         # 在l1里面，调用setPixmap命令，建立一个图像存放框，并将之前的图像png存放在这个框框里。
         self.picture.setPixmap(QPixmap(self.fname))
 
