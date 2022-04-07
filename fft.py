@@ -2,13 +2,10 @@
 import numpy as np
 from numpy.fft import fft
 import re
-import matplotlib.pyplot as plt
 
 import pygame, math, os
 from pygame.locals import *
-from sys import exit
 
-from sympy import true
 
 def fftProcess(fileName):
     f = open(fileName,'r')
