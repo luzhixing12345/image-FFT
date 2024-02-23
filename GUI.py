@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from SVG import bitmap_to_contour_svg, writeFile
+from SVG import bitmap_to_contour_svg
 from fft import draw
 
 from opencvUtils import *

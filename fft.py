@@ -11,37 +11,32 @@ def fftProcess(svg_filename: str) -> List[List[float]]:
 
     with open(svg_filename, "r") as f:
         content = f.read()
-        points_list: List[List[float]] = []
+        point_list = []
         # 找到 svg 中所有的路径
         paths = re.findall(r"\bd=\"(.*?)\"", content)
         for path in paths:
             points = re.findall(r"-?\d+\.?\d*e?-?\d*?", path)
-            point_list = []
             for i in range(0, len(points), 2):
                 point_list.append((float(points[i + 1]), float(points[i])))
-            points_list.append(point_list)
 
-    all_points = []
-    for point_list in points_list:
-        y = [complex(p[0] - 270, p[1] - 270) for p in point_list]
+    y = [complex(p[0] - 270, p[1] - 270) for p in point_list]
 
-        # plt.plot(y_matrix[:, 0],y_matrix[:, 1])
-        # plt.show()
+    # plt.plot(y_matrix[:, 0],y_matrix[:, 1])
+    # plt.show()
 
-        y_len = len(y)
-        yy = fft(y)
+    y_len = len(y)
+    yy = fft(y)
 
-        PP = []
-        for i, v in enumerate(yy[:y_len]):
-            c = -2 * np.pi * i / y_len
+    PP = []
+    for i, v in enumerate(yy[:y_len]):
+        c = -2 * np.pi * i / y_len
 
-            PP.append([-v.real / y_len, c, -np.pi / 2])
-            PP.append([-v.imag / y_len, c, np.pi])
+        PP.append([-v.real / y_len, c, -np.pi / 2])
+        PP.append([-v.imag / y_len, c, np.pi])
 
-        PP.sort(key=lambda x: abs(x[0]), reverse=True)
-        all_points.append(PP)
+    PP.sort(key=lambda x: abs(x[0]), reverse=True)
 
-    return all_points
+    return PP
 
 
 # svgData("./images/132.txt")
@@ -69,9 +64,8 @@ def draw(filename: str):
     # 初始化pygame
     pygame.init()
     pygame.mixer.init()
-    os.environ["SDL_VIDEO_WINDOW_POS"] = "%d,%d" % (10, 70)
     # 创建一个窗口
-    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF, 32)
+    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
     pygame.display.set_caption("傅里叶变换可视化")
     font = pygame.font.SysFont("simhei", 20)
 

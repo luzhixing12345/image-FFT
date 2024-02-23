@@ -1,0 +1,6 @@
+*.txt
+!requirements.txt
+__pycache__
+
+images/
+video/
