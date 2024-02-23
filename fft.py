@@ -55,6 +55,7 @@ def draw(filename: str):
     scale = 1  # 缩放(默认120)
     FPS = 60  # 帧率
     point_size = 2  # 点的大小
+    thickness = 1  # 线条的粗细
     start_xy = (WINDOW_W // 2 + 100, WINDOW_H // 2)  # 圆的位置
 
     # 波形图参数
@@ -137,7 +138,7 @@ def draw(filename: str):
             # pygame.draw.circle(screen, b_color, (b_xy[0], int(b_xy[1] + self.ys[-1] * scale)), point_size)
             bl = len(self.xys)
             for i in range(bl - 1):
-                pygame.draw.line(screen, (255, 250, 0), self.xys[i], self.xys[i + 1], 1)
+                pygame.draw.line(screen, (255, 250, 0), self.xys[i], self.xys[i + 1], thickness)
 
     # fourier_list = sorted(fourier_list, key=lambda x: abs(x[0]), reverse=True)
     super_circle = Circle(0, 0, 0, color=b_color)
