@@ -1,52 +1,58 @@
-
 import numpy as np
 from numpy.fft import fft
 import re
+from typing import List
 
 import pygame, math, os
 from pygame.locals import *
 
 
-def fftProcess(fileName):
-    f = open(fileName,'r')
-    content = f.readlines()
-    pointList = []
-    for data in content:
-        pointAll = re.findall(r'-?\d+\.?\d*e?-?\d*?',data)
-        for i in range(0,len(pointAll),2):
-            #if i+8>=len(pointAll):break
-            pointList.append((float(pointAll[i+1]),float(pointAll[i])))
-            
-    #sorted(pointList)
-    y_matrix = np.array(pointList)
-    
-    y = [complex(p[0]- 270, p[1]-270) for p in pointList]
-    
-    print(y_matrix.shape)
-    # plt.plot(y_matrix[:, 0],y_matrix[:, 1])
-    # plt.show()
-    
-    y_len = len(y)
-    yy = fft(y)
+def fftProcess(svg_filename: str) -> List[List[float]]:
 
-    PP = []
-    for i, v in enumerate(yy[:y_len]):
-        c = -2 * np.pi * i / y_len
+    with open(svg_filename, "r") as f:
+        content = f.read()
+        points_list: List[List[float]] = []
+        # 找到 svg 中所有的路径
+        paths = re.findall(r"\bd=\"(.*?)\"", content)
+        for path in paths:
+            points = re.findall(r"-?\d+\.?\d*e?-?\d*?", path)
+            point_list = []
+            for i in range(0, len(points), 2):
+                point_list.append((float(points[i + 1]), float(points[i])))
+            points_list.append(point_list)
 
-        PP.append([-v.real / y_len, c, -np.pi / 2])
-        PP.append([-v.imag / y_len, c, np.pi])
+    all_points = []
+    for point_list in points_list:
+        y = [complex(p[0] - 270, p[1] - 270) for p in point_list]
 
-    PP.sort(key=lambda x: abs(x[0]), reverse=True)
-    return PP
-        
+        # plt.plot(y_matrix[:, 0],y_matrix[:, 1])
+        # plt.show()
+
+        y_len = len(y)
+        yy = fft(y)
+
+        PP = []
+        for i, v in enumerate(yy[:y_len]):
+            c = -2 * np.pi * i / y_len
+
+            PP.append([-v.real / y_len, c, -np.pi / 2])
+            PP.append([-v.imag / y_len, c, np.pi])
+
+        PP.sort(key=lambda x: abs(x[0]), reverse=True)
+        all_points.append(PP)
+
+    return all_points
+
+
 # svgData("./images/132.txt")
-        
-def draw(fname):
+
+
+def draw(filename: str):
 
     WINDOW_W = 1200
     WINDOW_H = 600
-    one_time = 5  # 时间流速（默认1）
-    scale = 1  # 缩放（默认120）
+    one_time = 5  # 时间流速(默认1)
+    scale = 1  # 缩放(默认120)
     FPS = 60  # 帧率
     point_size = 2  # 点的大小
     start_xy = (WINDOW_W // 2 + 100, WINDOW_H // 2)  # 圆的位置
@@ -54,22 +60,21 @@ def draw(fname):
     # 波形图参数
     b_scale = 1  # 图形缩放
     b_color = (255, 10, 250)  # 图形颜色
-    b_length = 1000  # 图形显示的长度
-    PP = fftProcess(fname)
+    b_length = 10000  # 图形显示的长度
+    PP = fftProcess(filename)
 
     fourier_list = PP[:]
 
     # 初始化pygame
     pygame.init()
     pygame.mixer.init()
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (10, 70)
+    os.environ["SDL_VIDEO_WINDOW_POS"] = "%d,%d" % (10, 70)
     # 创建一个窗口
     screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), pygame.DOUBLEBUF, 32)
     pygame.display.set_caption("傅里叶变换可视化")
-    font = pygame.font.SysFont('simhei', 20)
+    font = pygame.font.SysFont("simhei", 20)
 
-
-    class Circle():
+    class Circle:
         x, y = 0, 0
         r = 0
         angle = 0
@@ -110,14 +115,16 @@ def draw(fname):
             # 画轨道
             if self.father is not None:
                 # print(color_an, self.father.x, self.father.y)
-                pygame.draw.circle(screen, color_an, (int(round(self.father.x)), int(round(self.father.y))),
-                                max(int(round(abs(self.r) * scale)), 1),
-                                1)
-                pygame.draw.line(screen, self.color, (self.father.x, self.father.y), (self.x, self.y),
-                                1)
+                pygame.draw.circle(
+                    screen,
+                    color_an,
+                    (int(round(self.father.x)), int(round(self.father.y))),
+                    max(int(round(abs(self.r) * scale)), 1),
+                    1,
+                )
+                pygame.draw.line(screen, self.color, (self.father.x, self.father.y), (self.x, self.y), 1)
 
-
-    class Boxin():
+    class Boxin:
         xys = []
 
         def add_point(self, xy):
@@ -132,7 +139,6 @@ def draw(fname):
             for i in range(bl - 1):
                 pygame.draw.line(screen, (255, 250, 0), self.xys[i], self.xys[i + 1], 1)
 
-
     # fourier_list = sorted(fourier_list, key=lambda x: abs(x[0]), reverse=True)
     super_circle = Circle(0, 0, 0, color=b_color)
     super_circle.set_xy(start_xy)
@@ -143,7 +149,7 @@ def draw(fname):
 
     bx = Boxin()
     clock = pygame.time.Clock()
-    
+
     flag = False
     # 游戏主循环
     while True:
@@ -168,7 +174,7 @@ def draw(fname):
                 else:
                     print(type(event.key), event.key)
         if flag:
-            return 
+            return
         # 将背景图画上去
         screen.fill((0, 0, 0))
         # 运行
